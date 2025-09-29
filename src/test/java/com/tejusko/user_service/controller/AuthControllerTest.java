@@ -18,6 +18,8 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.context.ActiveProfiles; // Import ActiveProfiles
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc; // Needed for addFilters
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tejusko.user_service.entity.User;
@@ -25,7 +27,10 @@ import com.tejusko.user_service.repository.UserRepository;
 import com.tejusko.user_service.security.JwtUtil;
 import com.tejusko.user_service.service.EmailService;
 
+// Use AutoConfigureMockMvc to disable security filters for this test,
+// as we are testing public endpoints that should not require authentication.
 @WebMvcTest(AuthController.class)
+@AutoConfigureMockMvc(addFilters = false) // <-- THE FIX
 class AuthControllerTest {
 
     @Autowired
@@ -63,6 +68,8 @@ class AuthControllerTest {
     @Test
     void testLoginEndpoint() throws Exception {
         String rawPassword = "password123";
+        // NOTE: The BCryptPasswordEncoder instance should ideally be mocked or configured 
+        // to match the one used in the application context for consistency.
         String encodedPassword = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder().encode(rawPassword);
 
         User existing = new User();
@@ -105,7 +112,8 @@ class AuthControllerTest {
     @Test
     void testResetPasswordEndpoint() throws Exception {
         String token = "reset-token";
-        String newPassword = "newPassword123";
+        // Assuming your reset endpoint relies on JWT validation to get the username
+        // We ensure the JwtUtil is mocked to return a valid username for the token.
 
         User user = new User();
         user.setUsername("testuser");
