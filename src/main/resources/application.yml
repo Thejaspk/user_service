@@ -33,5 +33,5 @@ eureka:
     fetch-registry: true
 
 jwt:
-  secret: mysecretkey1234567890
-  expiration-ms: 3600000
+  secret: dGhlMjU2Yml0U2VjcmV0S2V5Rm9ySGFzaDI1NlRva2Vucw== 
+  expiration-ms: 3600000 
